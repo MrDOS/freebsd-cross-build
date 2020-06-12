@@ -49,7 +49,7 @@ rmdir /usr/local/"$HOST"/usr/lib
 # the links are broken. Because we've folded /usr/lib and /lib into the same
 # directory, the easy fix is to relink all broken symlinks to the base name of
 # their original targets.
-find /usr/local/"$HOST"/lib -xtype l | while read -r broken_link
+find -L /usr/local/"$HOST"/lib -type l | while read -r broken_link
 do
     target="$(basename "$(readlink "$broken_link")")"
     rm "$broken_link"

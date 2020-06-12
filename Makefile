@@ -1,5 +1,5 @@
-# The version of Ubuntu to use in the Docker image.
-UBUNTU_VERSION := 18.04
+# The version of Alpine to use in the Docker image.
+ALPINE_VERSION := 3.12
 
 # The FreeBSD version to target for cross-compilation.
 FBSD_VERSION := 9.3
@@ -35,26 +35,17 @@ DLO := -O
 #DL := curl
 #DLO := -o
 
-all: freebsd-cross-build
-
-freebsd-cross-build: ubuntu-build \
-                     $(FBSD_AMD64_BASE_ARCHIVE) \
+freebsd-cross-build: $(FBSD_AMD64_BASE_ARCHIVE) \
                      $(FBSD_I386_BASE_ARCHIVE) \
                      $(GCC_ARCHIVE) \
                      $(BINUTILS_ARCHIVE)
 	docker build --tag freebsd-cross-build:$(FBSD_VERSION) \
-	             --build-arg UBUNTU_VERSION=$(UBUNTU_VERSION) \
+	             --build-arg ALPINE_VERSION=$(ALPINE_VERSION) \
 	             --build-arg FBSD_VERSION=$(FBSD_VERSION) \
 	             --build-arg FBSD_AMD64_BASE_ARCHIVE=$(FBSD_AMD64_BASE_ARCHIVE) \
 	             --build-arg FBSD_I386_BASE_ARCHIVE=$(FBSD_I386_BASE_ARCHIVE) \
 	             --build-arg BINUTILS_ARCHIVE=$(BINUTILS_ARCHIVE) \
 	             --build-arg GCC_ARCHIVE=$(GCC_ARCHIVE) \
-	             .
-
-ubuntu-build:
-	docker build --tag ubuntu-build:$(UBUNTU_VERSION) \
-	             --build-arg UBUNTU_VERSION=$(UBUNTU_VERSION) \
-	             --file ubuntu-build.dockerfile \
 	             .
 
 $(FBSD_I386_BASE_ARCHIVE):
