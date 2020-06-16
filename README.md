@@ -1,7 +1,7 @@
 # freebsd-cross-build
 
-![Docker Automated build](https://img.shields.io/docker/automated/empterdose/freebsd-cross-build)
-![Docker Pulls](https://img.shields.io/docker/pulls/empterdose/freebsd-cross-build)
+[![Docker Automated build](https://img.shields.io/docker/automated/empterdose/freebsd-cross-build)](https://hub.docker.com/r/empterdose/freebsd-cross-build)
+[![Docker Pulls](https://img.shields.io/docker/pulls/empterdose/freebsd-cross-build)](https://hub.docker.com/r/empterdose/freebsd-cross-build)
 
 Docker image to enable C/C++ cross-compilation
 targeting FreeBSD
