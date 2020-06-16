@@ -33,13 +33,13 @@ ARG MAKEFLAGS="-j 4"
 ADD $FBSD_AMD64_BASE_URL /usr/local/src/fbsd-amd64-base.txz
 ADD $FBSD_I386_BASE_URL /usr/local/src/fbsd-i386-base.txz
 ADD $GCC_URL $BINUTILS_URL /usr/local/src/
-COPY build-cross.sh /usr/local/src/
+COPY compile .
 
 RUN export FBSD_MAJOR=$(echo $FBSD_VERSION | cut -d '.' -f 1) \
-    && /usr/local/src/build-cross.sh x86_64-freebsd$FBSD_MAJOR \
-                                     /usr/local/src/fbsd-amd64-base.txz \
-    && /usr/local/src/build-cross.sh i386-freebsd$FBSD_MAJOR \
-                                     /usr/local/src/fbsd-i386-base.txz
+    && /usr/local/src/build-cross x86_64-freebsd$FBSD_MAJOR \
+                                  /usr/local/src/fbsd-amd64-base.txz \
+    && /usr/local/src/build-cross i386-freebsd$FBSD_MAJOR \
+                                  /usr/local/src/fbsd-i386-base.txz
 RUN rm -Rf /usr/local/src
 
 ARG ALPINE_VERSION
@@ -50,3 +50,5 @@ RUN apk add --no-cache file make
 COPY --from=compile \
      /usr/local/ \
      /usr/local/
+COPY deploy .
+COPY README.md .
