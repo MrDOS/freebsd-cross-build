@@ -38,9 +38,9 @@ and the [SpectraLogic container][spec].
                  settarget x86_64-freebsd9 make -C /build
 
 By default, the container overrides none of Make's [implicit variables][mkvar],
-nor are there any unmprefixed compiler tools on the `PATH`
+nor are there any unprefixed compiler tools on the `PATH`
 (`gcc`, `g++`, etc.).
-To use the toolchains contained within the conatiner,
+To use the toolchains contained within the container,
 either specifically invoke the prefixed utilities:
 
     $ docker run ... i386-freebsd9-gcc -c -o /build/foo.o /build/foo.c
