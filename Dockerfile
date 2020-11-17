@@ -52,3 +52,4 @@ COPY --from=compile \
      /usr/local/
 COPY deploy .
 COPY README.md .
+WORKDIR /workdir

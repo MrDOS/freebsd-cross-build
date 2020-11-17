@@ -33,9 +33,13 @@ and the [SpectraLogic container][spec].
 
     $ docker run --rm \
                  --user $(id --user):$(id --group) \
-                 --volume /path/to/some/source:/build \
+                 --volume /path/to/some/source:/workdir \
                  empterdose/freebsd-cross-build:9.3 \
-                 settarget x86_64-freebsd9 make -C /build
+                 settarget x86_64-freebsd9 make
+
+The container's [working directory][workdir] is `/workdir`.
+If you mount your source directory onto this path,
+you can use relative paths in your build commands.
 
 By default, the container overrides none of Make's [implicit variables][mkvar],
 nor are there any unprefixed compiler tools on the `PATH`
@@ -43,7 +47,7 @@ nor are there any unprefixed compiler tools on the `PATH`
 To use the toolchains contained within the container,
 either specifically invoke the prefixed utilities:
 
-    $ docker run ... i386-freebsd9-gcc -c -o /build/foo.o /build/foo.c
+    $ docker run ... i386-freebsd9-gcc -c -o foo.o foo.c
 
 or use the `settarget` utility
 to launch a subshell with environment variables (including the `PATH`)
@@ -51,18 +55,19 @@ set up for a particular target:
 
     $ docker run ... --name build
     # Build for 64-bit.
-    $ docker exec build settarget x86_64-freebsd9 make -C /build
+    $ docker exec build settarget x86_64-freebsd9 make
     # Do something to archive the build output.
     # `make(1)` is not target-specific.
-    $ docker exec build make -C /build clean
+    $ docker exec build make clean
     # Build for 32-bit.
-    $ docker exec build settarget i386-freebsd9 make -C /build
+    $ docker exec build settarget i386-freebsd9 make
 
 The image is based on Alpine Linux,
 so any additional packages you might need
 can be installed [via `apk`][apk].
 Note that the image includes GNU Make, not BSD Make.
 
+[workdir]: https://docs.docker.com/engine/reference/builder/#workdir
 [mkvar]: https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
 [apk]: https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management#Add_a_Package
 
