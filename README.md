@@ -1,5 +1,6 @@
 # freebsd-cross-build
 
+[![Git commits](https://img.shields.io/github/commit-activity/t/MrDOS/freebsd-cross-build)](https://github.com/MrDOS/freebsd-cross-build)
 [![Docker pulls](https://img.shields.io/docker/pulls/empterdose/freebsd-cross-build)](https://hub.docker.com/r/empterdose/freebsd-cross-build)
 [![Docker image size (v9.3)](https://img.shields.io/docker/image-size/empterdose/freebsd-cross-build/9.3)](https://hub.docker.com/r/empterdose/freebsd-cross-build)
 
