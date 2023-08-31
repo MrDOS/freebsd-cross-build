@@ -1,0 +1,56 @@
+#! /bin/sh
+
+# This script invokes a clang (or clang++, or clang-cpp) with appropriate
+# `--target` and `--sysroot` arguments for cross-compiling. This script is
+# symlinked in two ways:
+#
+# 1. Into architecture-specific binaries directories (e.g.,
+#    /usr/local/x86_64-freebsd11/bin/cc).
+# 2. As an architecture-specific executable in /usr/local/bin (e.g.,
+#    /usr/local/bin/arm64-freebsd11-cpp).
+#
+# We need to figure out (from $0) the name of the target architecture, and the
+# name of the tool we need to invoke.
+
+SELF="$0"
+die () {
+    cat 1>&2 <<ERR
+$SELF: $1
+ERR
+    exit 2
+}
+
+# Split target/tool from arch-os-tool:
+target="$(basename "$0" | cut -d - -f 1-2)"
+tool="$(basename "$0" | cut -d - -f 3-)"
+
+# Can't get the target from the basename alone; try name of the the parent
+# directory's parent.
+if [ "$target" = "$tool" ] || ( [ -n "$target" ] && [ -z "$tool" ] )
+then
+    # Emulation of `realpath --no-symlinks "$0"`.
+    wrapper="$(realpath "$(dirname "$0")")/$(basename "$0")"
+
+    if [ "$(basename "$(dirname "$wrapper")")" != "bin" ]
+    then
+        die "clang-wrapper can't figure out what personality to assume from \
+from the symlink path! The name of the symlink does not indicate the target, \
+and the symlink is not in a \`bin/\` directory."
+    fi
+
+    target="$(basename "$(dirname "$(dirname "$wrapper")")")"
+    tool="$(basename "$0")"
+fi
+
+case "$tool" in
+cc|clang) tool=clang ;;
+c++|clang++) tool=clang++ ;;
+cpp|clang-cpp) tool=clang-cpp ;;
+*) die "clang-wrapper invoked for unsupported tool $tool!" ;;
+esac
+
+/usr/bin/"$tool" \
+    --target="$target" \
+    --sysroot=/usr/local/"$target" \
+    -fuse-ld=lld \
+    "$@"

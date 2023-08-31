@@ -12,20 +12,11 @@ endif
 ifdef FBSD_AMD64_BASE_URL
 FBSD_AMD64_BASE_URL_ARG := FBSD_AMD64_BASE_URL=$(FBSD_AMD64_BASE_URL)
 endif
+ifdef FBSD_ARM64_BASE_URL
+FBSD_ARM64_BASE_URL_ARG := FBSD_ARM64_BASE_URL=$(FBSD_ARM64_BASE_URL)
+endif
 ifdef FBSD_I386_BASE_URL
 FBSD_I386_BASE_URL_ARG := FBSD_I386_BASE_URL=$(FBSD_I386_BASE_URL)
-endif
-ifdef GNU_MIRROR
-GNU_MIRROR_ARG := GNU_MIRROR=$(GNU_MIRROR)
-endif
-ifdef GCC_URL
-GCC_URL_ARG := GCC_URL=$(GCC_URL)
-endif
-ifdef BINUTILS_URL
-BINUTILS_URL_ARG := BINUTILS_URL=$(BINUTILS_URL)
-endif
-ifdef MAKEFLAGS
-MAKEFLAGS_ARG := MAKEFLAGS=$(MAKEFLAGS)
 endif
 
 # https://docs.docker.com/engine/reference/builder/#predefined-args
@@ -46,11 +37,8 @@ BUILD_ARGS := $(addprefix --build-arg ,$(ALPINE_VERSION_ARG) \
                                        $(FBSD_VERSION_ARG) \
                                        $(FBSD_MIRROR_ARG) \
                                        $(FBSD_AMD64_BASE_URL_ARG) \
+                                       $(FBSD_ARM64_BASE_URL_ARG) \
                                        $(FBSD_I386_BASE_URL_ARG) \
-                                       $(GNU_MIRROR_ARG) \
-                                       $(GCC_URL_ARG) \
-                                       $(BINUTILS_URL_ARG) \
-                                       $(MAKEFLAGS_ARG) \
                                        $(HTTP_PROXY) \
                                        $(HTTPS_PROXY) \
                                        $(FTP_PROXY) \

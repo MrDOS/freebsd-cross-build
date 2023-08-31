@@ -1,0 +1,36 @@
+#! /bin/sh
+
+# Unpack a FreeBSD base archive into an architecture-appropriate sysroot
+# directory in /usr/local.
+#
+# Expects two arguments:
+#
+# - The architecture tuple of the target (e.g., x86_64-freebsd11).
+# - The path to the FreeBSD base.txz archive for the target CPU architecture.
+
+set -e
+
+if [ $# -lt 2 ]
+then
+    echo "$0: insufficient arguments!" 1>&2
+    exit 1
+fi
+
+HOST="$1"
+FBSD_BASE_ARCHIVE="$2"
+SYSROOT=/usr/local/"$HOST"
+
+mkdir -p "$SYSROOT"
+tar -C "$SYSROOT" \
+    -xf "$FBSD_BASE_ARCHIVE" \
+    ./usr/include \
+    ./usr/lib \
+    ./usr/tests/lib \
+    ./lib
+
+# Relink any absolute symlinks.
+find -L "$SYSROOT" -type l | while read -r broken_link
+do
+    target="$(realpath "$SYSROOT"/$(readlink "$broken_link"))"
+    ln -fs "$target" "$broken_link"
+done

@@ -5,18 +5,19 @@
 # otherwise, the arguments are executed under the subshell (as if passed to
 # `/bin/sh -c`).
 #
-# After sanity-checking the target, the script sets the AR, AS, CC, CXX, CPP,
-# LD, and RANLIB environment variables to reflect the names of the respective
-# executables for that target. It also adds a path containing unprefixed tools
-# for the target (e.g., `gcc` instead of `$target-gcc`), if discovered, to the
+# After sanity-checking the target, the script sets the CC, CXX, CPP, and LD
+# environment variables to reflect the names of the respective executables for
+# that target. It also adds the `bin/` directory containing unprefixed tools
+# for the target (e.g., `cc` instead of `$target-cc`), if discovered, to the
 # front of your PATH.
 #
 # E.g., for target `x86_64-linux-gnu`, the script first checks for the
 # existence of a toolchain targeting that architecture in /usr/x86_64-linux-gnu
 # or /usr/local/x86_64-linux-gnu. Finding that /usr/local/x86_64-linux-gnu
-# exists, it then sets CC to `x86_64-linux-gnu-cc`, CXX to
-# `x86_64-linux-gnu-g++`, etc. Then, if /usr/local/x86_64-linux-gnu/bin also
-# exists, it adds it to the beginning of the PATH. Then it launches a subshell.
+# exists, it then sets CC to `x86_64-linux-gnu-clang`, CXX to
+# `x86_64-linux-gnu-clang++`, etc. Then, if /usr/local/x86_64-linux-gnu/bin
+# also exists, it adds it to the beginning of the PATH. Then it launches a
+# subshell.
 
 POSSIBLE_LIB_PATHS="/usr /usr/local"
 
@@ -27,7 +28,7 @@ $SELF: $1
 Usage: $SELF target [shell-arg ...]
 
   target    the multiarch tuple for your desired compiler toolchain
-            (e.g., x86_64-freebsd9)
+            (e.g., x86_64-freebsd11)
 HELP
     exit 1
 }
@@ -61,13 +62,10 @@ then
     die "could not locate library directory for target $target"
 fi
 
-export AR="$target"-ar
-export AS="$target"-as
-export CC="$target"-gcc
-export CXX="$target"-g++
-export CPP="$target"-cpp
+export CC="$target"-clang
+export CXX="$target"-clang++
+export CPP="$target"-clang-cpp
 export LD="$target"-ld
-export RANLIB="$target"-ranlib
 
 # Add the bin directory for this target, if it exists, to the PATH.
 if [ -d "$libdir"/bin ]
@@ -97,15 +95,14 @@ then
     # Otherwise, those trailing arguments wouldn't be passed, and the behaviour
     # would be quite confusing:
     #
-    #     $ settarget foo gcc bar
-    #     gcc: fatal error: no input files
-    #     compilation terminated.
+    #     $ settarget foo clang bar
+    #     clang: error: no input files
     #
     # This is particularly relevant in the context of Docker, where Docker
     # automatically “collects up” stray arguments given to `docker run` in a
     # similar manner:
     #
-    #     $ docker run --rm alpine:3.12 echo one two three
+    #     $ docker run --rm alpine:3.18 echo one two three
     #     one two three
     #
     # Given that we expect this script to be used as part of a `docker run` or
